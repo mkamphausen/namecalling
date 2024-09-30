@@ -2,9 +2,15 @@ import pandas as pd
 import re
 from collections import Counter
 
-def extract_hashtags(text):
-    """Extract hashtags from a text string."""
-    return re.findall(r'#\w+', str(text))
+# def extract_hashtags(text):
+#     """Extract hashtags from a text string."""
+#     return re.findall(r'#\w+', str(text))
+
+# Function to extract hashtags containing 'trump' or 'biden'
+def extract_trump_biden_hashtags(text):
+    hashtags = re.findall(r'#\w*trump\w*|#\w*biden\w*', text.lower())
+    return hashtags
+
 
 def analyze_hashtags(file_path):
     # Read the CSV file into a DataFrame
@@ -19,9 +25,10 @@ def analyze_hashtags(file_path):
     hashtag_counter = Counter()
     pred_hashtag_counts = {'0': Counter(), '1': Counter()}
 
-    # Iterate through each row to extract hashtags and count occurrences based on `name_calling_pred`
+    # Iterate through each row to extract hashtags and count occurrences
     for _, row in df.iterrows():
-        hashtags = extract_hashtags(row['tweet'])
+        # hashtags = extract_hashtags(row['tweet'])
+        hashtags = extract_trump_biden_hashtags(row['tweet'])
         hashtag_counter.update(hashtags)
 
         # Check if `name_calling_pred` column has 0 or 1 and update respective counters
@@ -46,19 +53,16 @@ def display_results():
     print(result.to_string(index=False))
 
 def filter_and_sort_hashtags(result_df):
-    """Sort the hashtags by overall occurrence and filter those with more than one occurrence."""
-    # Filter hashtags that occur more than once
-    filtered_df = result_df[result_df['overall_occurrence'] > 1]
-    
-    # Sort by overall occurrence in descending order
-    sorted_df = filtered_df.sort_values(by='overall_occurrence', ascending=False)
+    """Sort the hashtags by overall occurrence."""
+    # Sort by overall occurrence in descending order (no filtering)
+    sorted_df = result_df.sort_values(by='overall_occurrence', ascending=False)
     
     # Display the sorted DataFrame
-    print("\nHashtags with more than one occurrence (sorted by overall occurrence):")
+    print("\nAll Hashtags (sorted by overall occurrence):")
     print(sorted_df.to_string(index=False))
 
-# Example usage
-file_path = 'trump_output_with_predictions.csv'  # Replace with the path to your actual CSV file
+
+file_path = 'data/all_tweets_without_duplicates.csv' 
 result_df = analyze_hashtags(file_path)
 
 filter_and_sort_hashtags(result_df)

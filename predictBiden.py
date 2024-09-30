@@ -8,19 +8,13 @@ print(starttime)
 # Load the CSV file into a DataFrame
 df = pd.read_csv('data/biden_processed/biden_filtered_english.csv',sep=',', encoding='utf-8', on_bad_lines='skip', low_memory=False, lineterminator='\n')
 
-# ,sep=','
-
 # Specify the column to use
-column_to_use = 'tweet'  # Replace 'text_column' with the actual column name containing the text data
+column_to_use = 'tweet'
 
 # Load the fine-tuned RoBERTa model and tokenizer
 model_name = 'civility-lab/roberta-base-namecalling'
 tokenizer = RobertaTokenizer.from_pretrained(model_name)
 model = RobertaForSequenceClassification.from_pretrained(model_name)
-
-# Move model to GPU if available
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-model.to(device)
 
 batch_size = 32
 results = []
@@ -35,8 +29,8 @@ def process_batch(texts):
     return probabilities
 
 # Process the specified column in chunks
-for i in range(0, len(df), batch_size): #replace df with df_sampled
-    batch = df[column_to_use].iloc[i:i + batch_size].tolist() #replace df with df_sampled
+for i in range(0, len(df), batch_size): 
+    batch = df[column_to_use].iloc[i:i + batch_size].tolist() 
     probabilities = process_batch(batch)
     predicted_classes = torch.argmax(probabilities, dim=1)
     

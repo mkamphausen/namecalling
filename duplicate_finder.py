@@ -18,10 +18,10 @@ def clean_and_merge(file1, file2):
     merged_df = pd.concat([df1_clean, df2_clean])
 
     # Count duplicates before removing them
-    duplicates_count = merged_df.duplicated(subset='tweet', keep='first').sum()
+    duplicates_count = merged_df.duplicated(subset=['tweet_id']).sum()
 
     # Remove duplicates
-    merged_df = merged_df.drop_duplicates(subset='tweet', keep='first')
+    merged_df = merged_df.drop_duplicates(subset=['tweet_id'], keep='first')
 
     # Print statistics
     print(f"Number of NaN rows deleted: {total_nan_count}")
@@ -37,9 +37,9 @@ def save_to_csv(df, output_file):
 
 
 # Example usage
-file1 = 'biden_output_with_predictions.csv' # Replace with the path to your first CSV file
-file2 = 'trump_output_with_predictions.csv' # Replace with the path to your second CSV file
-output_file = 'all_tweets_without_duplicates.csv'         # Specify the path for the output file
+file1 = 'data/biden_processed/biden_with_predictions.csv' # Replace with the path to your first CSV file
+file2 = 'data/trump_processed/trump_with_predictions.csv' # Replace with the path to your second CSV file
+output_file = 'data/all_tweets_without_duplicates.csv'         # Specify the path for the output file
 
 merged_df = clean_and_merge(file1, file2)
 
